@@ -97,4 +97,3 @@ This will require updates to the ERD
 
 * On public teams, users who did not create the team can ask to aquire a team and select one of their own PUBLIC teams to trade
 * A new link is added to the navigation named "Trade Requests" and there is a notification indicator that a request is in progress
-
