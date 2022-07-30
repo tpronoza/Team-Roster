@@ -1,25 +1,32 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Button } from 'react-bootstrap';
-import { signOut } from '../utils/auth';
+import { getMembers } from '../api/memberData';
 import { useAuth } from '../utils/context/authContext';
+import MemberCard from '../components/MemberCard';
 
 function Home() {
+  const [members, setMembers] = useState([]);
   const { user } = useAuth();
-
+  const getAllMembers = () => {
+    getMembers(user.uid).then(setMembers);
+  };
+  useEffect(() => {
+    getAllMembers();
+  }, []);
   return (
-    <div
-      className="text-center d-flex flex-column justify-content-center align-content-center"
-      style={{
-        height: '90vh',
-        padding: '30px',
-        maxWidth: '400px',
-        margin: '0 auto',
-      }}
-    >
-      <h1>Hello {user.displayName}! </h1>
-      <p>Click the button below to logout!</p>
-      <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={signOut}>
-        Sign Out
-      </Button>
+    <div className="text-center my-4">
+      <Link href="/member/new" passHref>
+        <Button>Add A Player</Button>
+      </Link>
+      <div className="d-flex flex-wrap">
+        {/* TODO: map over books here using BookCard component */}
+        {members.map((member) => (
+          <MemberCard key={member.firebaseKey} memberObj={member} onUpdate={getAllMembers} />
+        ))}
+      </div>
+
     </div>
   );
 }
