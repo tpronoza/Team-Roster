@@ -11,11 +11,11 @@ import { updateMember, createMember } from '../../api/memberData';
 const initialState = {
   name: '',
   position: '',
-  number: '',
+  // number: '',
   memberImage: '',
 };
 
-function MemberForm({ obj }) {
+function MemberForm({ memberObj }) {
   const [formInput, setFormInput] = useState(initialState);
   const [teams, setTeams] = useState([]);
   const router = useRouter();
@@ -24,8 +24,8 @@ function MemberForm({ obj }) {
   useEffect(() => {
     getTeams(user.uid).then(setTeams);
 
-    if (obj.firebaseKey) setFormInput(obj);
-  }, [obj, user]);
+    if (memberObj.firebaseKey) setFormInput(memberObj);
+  }, [memberObj, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,8 +37,8 @@ function MemberForm({ obj }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (obj.firebaseKey) {
-      updateMember(formInput).then(() => router.push('/teams'));
+    if (memberObj.firebaseKey) {
+      updateMember(formInput).then(() => router.push('/'));
     } else {
       const payload = { ...formInput, uid: user.uid };
       createMember(payload).then(() => {
@@ -49,7 +49,7 @@ function MemberForm({ obj }) {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <h2 className="text-white mt-5">{obj.firebaseKey ? 'Update' : 'Create'} Player</h2>
+      <h2 className="text-white mt-5">{memberObj.firebaseKey ? 'Update' : 'Add'} Member</h2>
       <FloatingLabel controlId="floatingInput1" label="Player Name" className="mb-3">
         <Form.Control type="text" placeholder="Enter Member Name" name="name" value={formInput.name} onChange={handleChange} required />
       </FloatingLabel>
@@ -65,13 +65,13 @@ function MemberForm({ obj }) {
           className="mb-3"
           required
         >
-          <option value="">Select an Team</option>
+          <option value="">Select a Team</option>
           {
             teams.map((team) => (
               <option
                 key={team.firebaseKey}
                 value={team.firebaseKey}
-                selected={obj.teamId === team.firebaseKey}
+                selected={memberObj.teamId === team.firebaseKey}
               >
                 {team.name}
               </option>
@@ -100,13 +100,13 @@ function MemberForm({ obj }) {
       </FloatingLabel>
 
       {/* A WAY TO HANDLE UPDATES FOR TOGGLES, RADIOS, ETC  */}
-      <Button type="submit">{obj.firebaseKey ? 'Update' : 'Create'} Player</Button>
+      <Button type="submit">{memberObj.firebaseKey ? 'Update' : 'Add'} Player</Button>
     </Form>
   );
 }
 
 MemberForm.propTypes = {
-  obj: PropTypes.shape({
+  memberObj: PropTypes.shape({
     name: PropTypes.string,
     position: PropTypes.string,
     number: PropTypes.string,
@@ -118,7 +118,7 @@ MemberForm.propTypes = {
 };
 
 MemberForm.defaultProps = {
-  obj: initialState,
+  memberObj: initialState,
 };
 
 export default MemberForm;

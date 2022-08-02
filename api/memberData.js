@@ -12,12 +12,6 @@ const createMember = (memberObj) => new Promise((resolve, reject) => {
     }).catch(reject);
 });
 
-const updateMember = (memberObj) => new Promise((resolve, reject) => {
-  axios.patch(`${dbUrl}/members/${memberObj.firebaseKey}.json`, memberObj)
-    .then(resolve)
-    .catch(reject);
-});
-
 const getSingleMember = (firebaseKey) => new Promise((resolve, reject) => {
   axios.get(`${dbUrl}/members/${firebaseKey}.json`)
     .then((response) => resolve(response.data))
@@ -37,10 +31,24 @@ const getMembers = (uid) => new Promise((resolve, reject) => {
     .catch((error) => reject(error));
 });
 
+const updateMember = (memberObj) => new Promise((resolve, reject) => {
+  axios.patch(`${dbUrl}/members/${memberObj.firebaseKey}.json`, memberObj)
+    .then(() => getMembers(memberObj))
+    .then(resolve)
+    .catch(reject);
+});
+
 const deleteSingleMember = (firebaseKey) => new Promise((resolve, reject) => {
   axios.delete(`${dbUrl}/members/${firebaseKey}.json`)
     .then((response) => resolve(response.data))
     .catch((error) => reject(error));
+});
+
+const viewMemberDetails = (memberFirebaseKey) => new Promise((resolve, reject) => {
+  Promise.all([getSingleMember(memberFirebaseKey)])
+    .then(([memberObj]) => {
+      resolve({ memberObj });
+    }).catch((error) => reject(error));
 });
 
 export {
@@ -49,4 +57,5 @@ export {
   updateMember,
   getSingleMember,
   getMembers,
+  viewMemberDetails,
 };
